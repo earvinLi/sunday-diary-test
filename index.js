@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const { init: initDB, Counter } = require("./db");
+const crypto = require('crypto');
 
 const logger = morgan("tiny");
 
@@ -47,6 +48,25 @@ app.get("/api/wx_openid", async (req, res) => {
   if (req.headers["x-wx-source"]) {
     res.send(req.headers["x-wx-openid"]);
   }
+});
+
+// test
+function generateSha1Hash(data) {
+  const hash = crypto.createHash('sha1');
+  hash.update(data);
+  return hash.digest('hex'); // 'hex' for hexadecimal representation
+}
+
+app.get("/api/auto_reply", async (req, res) => {
+  const { signature, timestamp, nonce } = req.query;
+  const token = 'AAA';
+  const testString = generateSha1Hash(`${timestamp}${nonce}${token}`);
+  if (signature === testString) res.send(true);
+  return res.send(false);
+});
+
+app.get("/api/hello_world", async (req, res) => {
+  res.send('hello world');
 });
 
 const port = process.env.PORT || 80;
