@@ -64,7 +64,7 @@ app.get("/api/auto_reply", async (req, res) => {
   const testArray = [timestamp, nonce, token].sort();
   const testString = generateSha1Hash(testArray.join(''));
 
-  if (signature === testString) res.send({ echostr });
+  if (signature === testString) res.send(echostr);
   else res.send({ echostr: 'error' });
 });
 
