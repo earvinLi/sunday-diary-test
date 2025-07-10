@@ -58,11 +58,14 @@ function generateSha1Hash(data) {
 }
 
 app.get("/api/auto_reply", async (req, res) => {
-  const { signature, timestamp, nonce } = req.query;
+  const { signature, timestamp, nonce, echostr } = req.query;
   const token = 'AAA';
-  const testString = generateSha1Hash(`${timestamp}${nonce}${token}`);
-  if (signature === testString) res.send(true);
-  return res.send(false);
+
+  const testArray = [timestamp, nonce, token].sort();
+  const testString = generateSha1Hash(testArray.join(''));
+
+  if (signature === testString) res.send({ echostr });
+  else res.send({ echostr: 'error' });
 });
 
 app.get("/api/hello_world", async (req, res) => {
